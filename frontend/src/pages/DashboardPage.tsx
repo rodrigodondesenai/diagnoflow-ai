@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { api } from "../services/api";
-import { DashboardResponse } from "../types";
+import { MockNotice } from "../components/MockNotice";
 import { SectionHeader } from "../components/SectionHeader";
 import { StatCard } from "../components/StatCard";
+import { api } from "../services/api";
+import { DashboardResponse } from "../types";
 
 export function DashboardPage() {
   const [data, setData] = useState<DashboardResponse | null>(null);
@@ -13,7 +14,7 @@ export function DashboardPage() {
   }, []);
 
   if (error) {
-    return <div className="panel">Erro ao carregar dashboard: {error}</div>;
+    return <div className="panel">Erro ao carregar o painel operacional: {error}</div>;
   }
 
   if (!data) {
@@ -24,27 +25,32 @@ export function DashboardPage() {
     <div className="page">
       <SectionHeader
         title="Painel operacional"
-        description="Visão rápida da planta, com alertas críticos, ocorrências abertas e diagnósticos simulados mais recentes."
+        description="Vis\u00e3o r\u00e1pida da planta, com alertas cr\u00edticos, ocorr\u00eancias abertas e diagn\u00f3sticos simulados mais recentes."
       />
 
       <section className="hero-card">
         <div>
-          <span className="badge badge-info">Entrega intermediária funcional</span>
-          <h3>Diagnóstico simulado para triagem técnica de máquinas rotativas</h3>
+          <span className="badge badge-info">Entrega intermedi\u00e1ria funcional</span>
+          <h3>Diagn\u00f3stico simulado para triagem t\u00e9cnica de m\u00e1quinas rotativas</h3>
         </div>
-        <p>Diagnóstico simulado — nenhum LLM foi integrado nesta fase.</p>
+        <p>Aplica\u00e7\u00e3o pronta para demonstra\u00e7\u00e3o local, com regras mockadas e navega\u00e7\u00e3o completa.</p>
       </section>
+
+      <MockNotice
+        title="Diagn\u00f3stico simulado"
+        description="Nenhum LLM foi integrado nesta fase. As respostas exibidas nesta aplica\u00e7\u00e3o s\u00e3o geradas por regras est\u00e1ticas para fins de demonstra\u00e7\u00e3o da entrega intermedi\u00e1ria."
+      />
 
       <section className="stat-grid">
         <StatCard label="Equipamentos cadastrados" value={data.summary.total_equipment} />
-        <StatCard label="Ocorrências abertas" value={data.summary.open_incidents} tone="alert" />
-        <StatCard label="Alertas críticos" value={data.summary.critical_alerts} tone="danger" />
-        <StatCard label="Diagnósticos simulados" value={data.summary.simulated_diagnostics} />
+        <StatCard label="Ocorr\u00eancias abertas" value={data.summary.open_incidents} tone="alert" />
+        <StatCard label="Alertas cr\u00edticos" value={data.summary.critical_alerts} tone="danger" />
+        <StatCard label="Diagn\u00f3sticos simulados" value={data.summary.simulated_diagnostics} />
       </section>
 
       <section className="panel">
         <div className="panel-header">
-          <h3>Últimas ocorrências</h3>
+          <h3>\u00daltimas ocorr\u00eancias</h3>
         </div>
         <div className="incident-list">
           {data.latest_incidents.map(({ incident, diagnostic }) => (

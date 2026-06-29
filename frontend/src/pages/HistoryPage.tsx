@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { MockNotice } from "../components/MockNotice";
+import { SectionHeader } from "../components/SectionHeader";
 import { api } from "../services/api";
 import { Equipment, IncidentWithDiagnostic } from "../types";
-import { SectionHeader } from "../components/SectionHeader";
 
 export function HistoryPage() {
   const [equipment, setEquipment] = useState<Equipment[]>([]);
@@ -19,8 +20,12 @@ export function HistoryPage() {
   return (
     <div className="page">
       <SectionHeader
-        title="Histórico"
-        description="Consulte ocorrências registradas e refine a leitura com filtros por ativo, criticidade e status."
+        title="Hist\u00f3rico"
+        description="Consulte ocorr\u00eancias registradas e refine a leitura com filtros por ativo, criticidade e status."
+      />
+      <MockNotice
+        title="Hist\u00f3rico alimentado por dados simulados"
+        description="As ocorr\u00eancias exibidas nesta etapa servem para comprovar o fluxo funcional da aplica\u00e7\u00e3o antes da integra\u00e7\u00e3o com IA generativa."
       />
 
       <section className="panel">
@@ -36,13 +41,13 @@ export function HistoryPage() {
           <select value={filters.criticality} onChange={(e) => setFilters({ ...filters, criticality: e.target.value })}>
             <option value="">Todas as criticidades</option>
             <option value="baixa">Baixa</option>
-            <option value="média">Média</option>
+            <option value="m\u00e9dia">M\u00e9dia</option>
             <option value="alta">Alta</option>
           </select>
           <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })}>
             <option value="">Todos os status</option>
-            <option value="open">Open</option>
-            <option value="closed">Closed</option>
+            <option value="open">Aberta</option>
+            <option value="closed">Encerrada</option>
           </select>
         </div>
 

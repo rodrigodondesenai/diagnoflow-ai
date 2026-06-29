@@ -1,10 +1,10 @@
 import { NavLink, Outlet } from "react-router-dom";
 
 const navItems = [
-  { to: "/", label: "Dashboard" },
+  { to: "/", label: "Painel" },
   { to: "/equipamentos", label: "Equipamentos" },
-  { to: "/nova-ocorrencia", label: "Nova Ocorrência" },
-  { to: "/historico", label: "Histórico" },
+  { to: "/nova-ocorrencia", label: "Nova Ocorr\u00eancia" },
+  { to: "/historico", label: "Hist\u00f3rico" },
   { to: "/futuro-ia", label: "Futura IA" },
 ];
 
@@ -14,9 +14,9 @@ export function Layout() {
       <aside className="sidebar">
         <div>
           <p className="eyebrow">DiagnoFlow AI</p>
-          <h1>Triagem técnica industrial</h1>
+          <h1>Triagem t\u00e9cnica industrial</h1>
           <p className="sidebar-copy">
-            Plataforma de apoio para registrar sintomas, organizar ocorrências e emitir diagnósticos simulados.
+            Plataforma de apoio para registrar sintomas, organizar ocorr\u00eancias e emitir diagn\u00f3sticos simulados.
           </p>
         </div>
 
@@ -34,7 +34,7 @@ export function Layout() {
 
         <div className="sidebar-footer">
           <span className="badge badge-warning">Sem LLM nesta fase</span>
-          <p>Arquitetura pronta para futura integração com prompts, tools e saídas estruturadas.</p>
+          <p>Arquitetura pronta para futura integra\u00e7\u00e3o com prompts, tools e sa\u00eddas estruturadas.</p>
         </div>
       </aside>
 
