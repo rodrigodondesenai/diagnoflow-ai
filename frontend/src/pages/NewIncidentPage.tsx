@@ -22,8 +22,8 @@ export function NewIncidentPage() {
     equipment_id: "",
     main_symptom: "",
     description: "",
-    shift: "manh\u00e3",
-    perceived_urgency: "m\u00e9dia",
+    shift: "manhã",
+    perceived_urgency: "média",
     status: "open",
   });
   const [symptoms, setSymptoms] = useState<SymptomFlags>(initialSymptoms);
@@ -61,12 +61,12 @@ export function NewIncidentPage() {
     <div className="page split-page">
       <div>
         <SectionHeader
-          title="Nova ocorr\u00eancia"
-          description="Registre sintomas operacionais e receba um diagn\u00f3stico t\u00e9cnico simulado baseado em regras simples."
+          title="Nova ocorrência"
+          description="Registre sintomas operacionais e receba um diagnóstico técnico simulado baseado em regras simples."
         />
         <MockNotice
-          title="Fluxo mockado para demonstra\u00e7\u00e3o"
-          description="Ao enviar a ocorr\u00eancia, o sistema gera uma resposta determin\u00edstica com base nos sintomas informados. Nenhum modelo generativo participa deste processo."
+          title="Fluxo mockado para demonstração"
+          description="Ao enviar a ocorrência, o sistema gera uma resposta determinística com base nos sintomas informados. Nenhum modelo generativo participa deste processo."
         />
         <section className="panel">
           <form className="form-grid" onSubmit={handleSubmit}>
@@ -86,30 +86,30 @@ export function NewIncidentPage() {
               required
             />
             <textarea
-              placeholder="Descri\u00e7\u00e3o operacional"
+              placeholder="Descrição operacional"
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={5}
               required
             />
             <select value={form.shift} onChange={(e) => setForm({ ...form, shift: e.target.value })}>
-              <option value="manh\u00e3">Manh\u00e3</option>
+              <option value="manhã">Manhã</option>
               <option value="tarde">Tarde</option>
               <option value="noite">Noite</option>
             </select>
             <select value={form.perceived_urgency} onChange={(e) => setForm({ ...form, perceived_urgency: e.target.value })}>
               <option value="baixa">Baixa</option>
-              <option value="m\u00e9dia">M\u00e9dia</option>
+              <option value="média">Média</option>
               <option value="alta">Alta</option>
             </select>
 
             <div className="checkbox-grid">
               {[
-                ["abnormal_noise", "Ru\u00eddo anormal"],
-                ["vibration", "Vibra\u00e7\u00e3o"],
+                ["abnormal_noise", "Ruído anormal"],
+                ["vibration", "Vibração"],
                 ["overheating", "Superaquecimento"],
                 ["leakage", "Vazamento"],
-                ["electrical_failure", "Falha el\u00e9trica"],
+                ["electrical_failure", "Falha elétrica"],
                 ["total_stop", "Parada total"],
                 ["performance_loss", "Perda de desempenho"],
               ].map(([key, label]) => (
@@ -123,28 +123,28 @@ export function NewIncidentPage() {
                 </label>
               ))}
             </div>
-            <button type="submit">Gerar diagn\u00f3stico simulado</button>
+            <button type="submit">Gerar diagnóstico simulado</button>
           </form>
         </section>
       </div>
 
       <section className="panel result-panel">
         <div className="panel-header">
-          <h3>Sa\u00edda do diagn\u00f3stico</h3>
+          <h3>Saída do diagnóstico</h3>
         </div>
         {result ? (
           <>
-            <span className="badge badge-warning">Diagn\u00f3stico simulado - nenhum LLM foi integrado nesta fase.</span>
+            <span className="badge badge-warning">Diagnóstico simulado - nenhum LLM foi integrado nesta fase.</span>
             <h4>{result.diagnostic.probable_cause}</h4>
             <p>
               Equipamento: <strong>{selectedEquipment?.name ?? result.incident.equipment.name}</strong>
             </p>
-            <p>Confian\u00e7a simulada: {Math.round(result.diagnostic.confidence_level * 100)}%</p>
+            <p>Confiança simulada: {Math.round(result.diagnostic.confidence_level * 100)}%</p>
             <p>Prioridade: {result.diagnostic.priority}</p>
             <p>Risco operacional: {result.diagnostic.operational_risk}</p>
-            <p>Observa\u00e7\u00f5es: {result.diagnostic.observations}</p>
+            <p>Observações: {result.diagnostic.observations}</p>
             <div>
-              <strong>A\u00e7\u00f5es recomendadas</strong>
+              <strong>Ações recomendadas</strong>
               <ul>
                 {result.diagnostic.recommended_actions.map((action) => (
                   <li key={action}>{action}</li>
@@ -152,7 +152,7 @@ export function NewIncidentPage() {
               </ul>
             </div>
             <div>
-              <strong>Pe\u00e7as possivelmente envolvidas</strong>
+              <strong>Peças possivelmente envolvidas</strong>
               <p>{result.diagnostic.involved_parts.join(", ")}</p>
             </div>
             <button
@@ -160,11 +160,11 @@ export function NewIncidentPage() {
               className="secondary-button"
               onClick={() => navigator.clipboard.writeText(result.diagnostic.technical_report)}
             >
-              Copiar relat\u00f3rio t\u00e9cnico
+              Copiar relatório técnico
             </button>
           </>
         ) : (
-          <p>Preencha o formul\u00e1rio para gerar uma an\u00e1lise mockada e um relat\u00f3rio textual reutiliz\u00e1vel.</p>
+          <p>Preencha o formulário para gerar uma análise mockada e um relatório textual reutilizável.</p>
         )}
       </section>
     </div>

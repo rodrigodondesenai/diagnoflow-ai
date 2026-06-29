@@ -10,7 +10,7 @@ const emptyForm = {
   sector: "",
   manufacturer: "",
   model: "",
-  criticality: "m\u00e9dia",
+  criticality: "média",
   status: "operacional",
 };
 
@@ -44,11 +44,11 @@ export function EquipmentPage() {
       <div>
         <SectionHeader
           title="Equipamentos"
-          description="Cadastre ativos cr\u00edticos e mantenha uma base limpa para abrir ocorr\u00eancias e consolidar hist\u00f3rico t\u00e9cnico."
+          description="Cadastre ativos críticos e mantenha uma base limpa para abrir ocorrências e consolidar histórico técnico."
         />
         <MockNotice
           title="Base operacional simulada"
-          description="Os dados persistidos localmente nesta fase existem para sustentar o fluxo da disciplina. N\u00e3o h\u00e1 enriquecimento por modelo de IA."
+          description="Os dados persistidos localmente nesta fase existem para sustentar o fluxo da disciplina. Não há enriquecimento por modelo de IA."
         />
         <section className="panel table-panel">
           <div className="panel-header">
@@ -94,13 +94,13 @@ export function EquipmentPage() {
           <input placeholder="Modelo" value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} />
           <select value={form.criticality} onChange={(e) => setForm({ ...form, criticality: e.target.value })}>
             <option value="baixa">Baixa</option>
-            <option value="m\u00e9dia">M\u00e9dia</option>
+            <option value="média">Média</option>
             <option value="alta">Alta</option>
           </select>
           <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
             <option value="operacional">Operacional</option>
-            <option value="em observa\u00e7\u00e3o">Em observa\u00e7\u00e3o</option>
-            <option value="operando com restri\u00e7\u00e3o">Operando com restri\u00e7\u00e3o</option>
+            <option value="em observação">Em observação</option>
+            <option value="operando com restrição">Operando com restrição</option>
             <option value="parado">Parado</option>
           </select>
           <button type="submit">Cadastrar equipamento</button>

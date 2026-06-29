@@ -20,12 +20,12 @@ export function HistoryPage() {
   return (
     <div className="page">
       <SectionHeader
-        title="Hist\u00f3rico"
-        description="Consulte ocorr\u00eancias registradas e refine a leitura com filtros por ativo, criticidade e status."
+        title="Histórico"
+        description="Consulte ocorrências registradas e refine a leitura com filtros por ativo, criticidade e status."
       />
       <MockNotice
-        title="Hist\u00f3rico alimentado por dados simulados"
-        description="As ocorr\u00eancias exibidas nesta etapa servem para comprovar o fluxo funcional da aplica\u00e7\u00e3o antes da integra\u00e7\u00e3o com IA generativa."
+        title="Histórico alimentado por dados simulados"
+        description="As ocorrências exibidas nesta etapa servem para comprovar o fluxo funcional da aplicação antes da integração com IA generativa."
       />
 
       <section className="panel">
@@ -41,7 +41,7 @@ export function HistoryPage() {
           <select value={filters.criticality} onChange={(e) => setFilters({ ...filters, criticality: e.target.value })}>
             <option value="">Todas as criticidades</option>
             <option value="baixa">Baixa</option>
-            <option value="m\u00e9dia">M\u00e9dia</option>
+            <option value="média">Média</option>
             <option value="alta">Alta</option>
           </select>
           <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })}>
