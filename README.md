@@ -22,10 +22,11 @@ A solucao entregue foi uma aplicacao com:
 - Dados simulados persistidos em SQLite.
 - Interacoes de cadastro, listagem, historico e geracao de diagnostico mockado.
 - Avisos explicitos na interface e na API de que nao ha LLM integrado nesta etapa.
+- Suporte para publicacao em endpoint unico, com FastAPI servindo o build do frontend.
 
 ## O que nao existe nesta fase
 
-- Nenhuma chamada para OpenAI, Anthropic, Gemini, Ollama ou outro provedor.
+- Nenhuma chamada para OpenAI, Anthropic, Gemini, Ollama, LangChain ou outro provedor.
 - Nenhuma inferencia real com modelo generativo.
 - Nenhuma autenticacao.
 - Nenhum deploy com Docker.
@@ -34,6 +35,9 @@ A solucao entregue foi uma aplicacao com:
 
 ```text
 frontend (React + Vite + TypeScript)
+        |
+        v
+build estatico (frontend/dist)
         |
         v
 backend (FastAPI + SQLAlchemy)
@@ -57,9 +61,11 @@ diagnoflow-ai/
 |  |  `- services/
 |  `- tests/
 |- frontend/
+|  |- dist/
 |  `- src/
 |- docs/
 |- prompts/
+|- render.yaml
 |- README.md
 `- .gitignore
 ```
@@ -70,7 +76,7 @@ diagnoflow-ai/
 - SQLite foi usado para reduzir complexidade de setup na avaliacao intermediaria.
 - React com TypeScript foi adotado para permitir interface navegavel, componentes reutilizaveis e tipagem explicita de `Equipment`, `Incident` e `Diagnostic`.
 - O diagnostico mockado foi isolado em `backend/app/services/mock_diagnostic_service.py`, facilitando a troca futura por uma integracao real com LLM.
-- A interface destaca em varios pontos que o diagnostico e simulado, evitando qualquer ambiguidade na avaliacao.
+- Em producao, o FastAPI serve o build do frontend e faz fallback de rotas da SPA para `index.html`, preservando `/docs` e as rotas da API.
 
 ## Como a IA sera integrada futuramente
 
@@ -100,7 +106,7 @@ As tools planejadas estao documentadas em [docs/future-llm-integration.md](docs/
 - Relatorio tecnico textual com botao de copia.
 - Pagina explicando a futura integracao com IA.
 
-## Como rodar o backend
+## Como rodar o backend em desenvolvimento
 
 ```powershell
 cd backend
@@ -114,7 +120,7 @@ Swagger/OpenAPI:
 
 - `http://127.0.0.1:8000/docs`
 
-## Como rodar o frontend
+## Como rodar o frontend em desenvolvimento
 
 ```powershell
 cd frontend
@@ -122,10 +128,57 @@ npm install
 npm run dev
 ```
 
-Build de producao:
+## Como rodar em modo producao local
+
+1. Gere o build do frontend:
 
 ```powershell
+cd frontend
+npm install
 npm run build
+```
+
+2. Inicie o backend servindo a SPA:
+
+```powershell
+cd backend
+.\.venv\Scripts\activate
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+3. Acesse:
+
+- `http://127.0.0.1:8000/` para a interface React;
+- `http://127.0.0.1:8000/docs` para a documentacao da API;
+- `http://127.0.0.1:8000/dashboard` para uma rota principal da API.
+
+## Deploy no Render
+
+O repositorio inclui `render.yaml` para facilitar a configuracao.
+
+### Opcao 1 - Blueprint
+
+1. No Render, escolha criar um servico via Blueprint.
+2. Aponte para este repositorio.
+3. O arquivo `render.yaml` configurara:
+   - build do frontend com `npm ci && npm run build`;
+   - instalacao das dependencias Python do backend;
+   - start em producao com `uvicorn`.
+
+### Opcao 2 - Configuracao manual
+
+Crie um Web Service com:
+
+- Build Command:
+
+```bash
+cd frontend && npm ci && npm run build && cd ../backend && pip install -r requirements.txt
+```
+
+- Start Command:
+
+```bash
+cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
 
 ## Endpoints principais
@@ -137,6 +190,7 @@ npm run build
 - `GET /incidents`
 - `POST /incidents`
 - `GET /diagnostics/{incident_id}`
+- `GET /docs`
 
 ## Dados iniciais
 
@@ -162,10 +216,17 @@ cd frontend
 npm run build
 ```
 
+Smoke test de producao local:
+
+```powershell
+cd backend
+.\.venv\Scripts\python -c "from fastapi.testclient import TestClient; from app.main import app; client=TestClient(app); client.__enter__(); print(client.get('/docs').status_code); print(client.get('/dashboard').status_code); print(client.get('/').status_code); print(client.get('/historico').status_code); client.__exit__(None,None,None)"
+```
+
 Repositorio:
 
 ```powershell
-git status
+git status --short
 ```
 
 ## Evidencia de uso do Codex
@@ -192,7 +253,7 @@ O uso do agente de codificacao esta documentado em [docs/agent-prompts.md](docs/
 - A criacao da `venv` falhou no `ensurepip` e precisou ser refeita com permissao ampliada.
 - O build do frontend falhou por ausencia da tipagem de `import.meta.env`.
 - Os testes do backend falharam inicialmente porque o `TestClient` nao estava disparando o `lifespan` da aplicacao fora de contexto.
-- Artefatos de build do Vite apareceram no repositorio e foram limpos na revisao.
+- A adaptacao para SPA exigiu revisar a rota `/` e incluir fallback para rotas internas do React.
 
 ## Limitacoes da primeira fase
 
@@ -201,7 +262,7 @@ O uso do agente de codificacao esta documentado em [docs/agent-prompts.md](docs/
 - Sem autenticacao e sem controle de perfis.
 - Sem auditoria avancada das acoes do usuario.
 - Sem observabilidade de producao.
-- Sem deploy automatizado.
+- Sem deploy automatizado alem da configuracao basica para Render.
 
 ## Estado atual para a avaliacao intermediaria
 
@@ -210,6 +271,7 @@ O uso do agente de codificacao esta documentado em [docs/agent-prompts.md](docs/
 - Frontend validado com `npm run build`.
 - Repositorio organizado e documentado.
 - Mensagem explicita de que nao ha LLM nesta fase.
+- Endpoint unico pronto para demonstracao publica.
 
 ## Documentacao complementar
 

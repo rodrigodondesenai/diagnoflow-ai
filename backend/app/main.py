@@ -1,13 +1,30 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session, joinedload
 
 from . import models, schemas
 from .database import Base, SessionLocal, engine, get_db
 from .routes import diagnostics, equipment, incidents
 from .seed import seed_data
+
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+FRONTEND_DIST_DIR = REPO_ROOT / "frontend" / "dist"
+FRONTEND_ASSETS_DIR = FRONTEND_DIST_DIR / "assets"
+SPA_EXCLUDED_PREFIXES = (
+    "/equipment",
+    "/incidents",
+    "/diagnostics",
+    "/dashboard",
+    "/docs",
+    "/openapi.json",
+    "/redoc",
+)
 
 
 @asynccontextmanager
@@ -24,7 +41,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(
     title="DiagnoFlow AI API",
     version="0.1.0",
-    description="API para triagem técnica simulada de máquinas rotativas industriais.",
+    description="API para triagem tecnica simulada de maquinas rotativas industriais.",
     lifespan=lifespan,
 )
 
@@ -40,13 +57,23 @@ app.include_router(equipment.router)
 app.include_router(incidents.router)
 app.include_router(diagnostics.router)
 
+if FRONTEND_ASSETS_DIR.exists():
+    app.mount("/assets", StaticFiles(directory=FRONTEND_ASSETS_DIR), name="frontend-assets")
 
-@app.get("/")
+
+def serve_spa() -> FileResponse:
+    index_file = FRONTEND_DIST_DIR / "index.html"
+    if not index_file.exists():
+        raise HTTPException(
+            status_code=503,
+            detail="Frontend build nao encontrado. Execute `cd frontend && npm run build` antes de iniciar o modo de producao.",
+        )
+    return FileResponse(index_file)
+
+
+@app.get("/", include_in_schema=False)
 def root():
-    return {
-        "name": "DiagnoFlow AI",
-        "message": "Diagnóstico simulado ativo. Nenhum LLM foi integrado nesta fase.",
-    }
+    return serve_spa()
 
 
 @app.get("/dashboard", response_model=schemas.DashboardResponse)
@@ -68,3 +95,19 @@ def dashboard(db: Session = Depends(get_db)):
         "summary": summary,
         "latest_incidents": [{"incident": incident, "diagnostic": incident.diagnostic} for incident in latest if incident.diagnostic],
     }
+
+
+@app.get("/{full_path:path}", include_in_schema=False)
+def spa_fallback(full_path: str):
+    normalized_path = f"/{full_path}".rstrip("/")
+    if not normalized_path:
+        normalized_path = "/"
+
+    if normalized_path.startswith(SPA_EXCLUDED_PREFIXES):
+        raise HTTPException(status_code=404, detail="Route not found.")
+
+    candidate = FRONTEND_DIST_DIR / full_path
+    if candidate.is_file():
+        return FileResponse(candidate)
+
+    return serve_spa()
